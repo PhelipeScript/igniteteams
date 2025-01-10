@@ -7,7 +7,7 @@ import { FlatList } from 'react-native'
 import { EmptyList } from '@components/EmptyList'
 import { Button } from '@components/Button'
 
-export default function Groups() {
+export function Groups() {
   const [groups, setGroups] = useState<string[]>([])
 
   return (
