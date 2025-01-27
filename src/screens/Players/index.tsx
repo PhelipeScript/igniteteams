@@ -4,8 +4,8 @@ import { Highlight } from '@components/Highlight'
 import { ButtonIcon } from '@components/ButtonIcon'
 import { Input } from '@components/Input'
 import { Filter } from '@components/Filter'
-import { Alert, FlatList } from 'react-native'
-import { useEffect, useState } from 'react'
+import { Alert, FlatList, TextInput } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
 import { PlayerCard } from '@components/PlayerCard'
 import { EmptyList } from '@components/EmptyList'
 import { Button } from '@components/Button'
@@ -25,6 +25,7 @@ export function Players() {
   const [players, setPlayers] = useState<PlayerStorageDTO[]>([])
   const route = useRoute()
   const { group } = route.params as RouteParams
+  const newPlayerNameInputRef = useRef<TextInput>(null)
 
   async function handleAddPlayer() {
     if (newPlayerName.trim().length === 0) {
@@ -41,6 +42,10 @@ export function Players() {
 
     try {
       await playerAddByGroup(newPlayer, group)
+
+      newPlayerNameInputRef.current?.blur() // tira o foco do input
+
+      setNewPlayerName('')
       fetchPlayersByTeam()
     } catch (error) {
       if (error instanceof AppError) {
@@ -77,9 +82,13 @@ export function Players() {
 
       <Form>
         <Input
+          inputRef={newPlayerNameInputRef}
           onChangeText={setNewPlayerName}
+          value={newPlayerName}
           placeholder="Nome da pessoa"
           autoCorrect={false}
+          onSubmitEditing={handleAddPlayer}
+          returnKeyType="done"
         />
 
         <ButtonIcon onPress={handleAddPlayer} icon="add" />
